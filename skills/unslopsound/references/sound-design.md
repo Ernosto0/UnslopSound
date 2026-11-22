@@ -105,7 +105,7 @@ Match the original file's container, sample rate (`-ar`), and channel count (`-a
 
 Always consider these three outcomes before running FFmpeg:
 
-- **Keep as-is**: Clean onset (<25 ms), headroom <= -1.0 dBFS, zero clipping, reasonable duration and level for its cue role, no obvious technical faults.
+- **Keep as-is**: Clean onset (<25 ms), `Flat factor == 0` (no actual clipping), reasonable duration and level for its cue role, no obvious technical faults. **Avoid placebo edits**: do not flag an otherwise clean file for `Refine` solely because its peak sits at `-0.5` to `-0.9 dBFS` or because a bright cue was intentionally leveled a few dB lower than a bass-heavy sibling. Every proposed edit should target a real defect or a clearly audible improvement.
 - **Remove / silence**: High-frequency hover/scroll/tick cues that add clutter rather than feedback, duplicate cues, or unreferenced orphan assets.
 - **Unrepairable with local DSP**: Severe baked-in hard clipping (flat-topped waveform), heavy low-bitrate metallic MP3 artifacts, excessive baked-in reverb you need to remove, or a fundamentally mismatched sound metaphor. State this plainly instead of over-processing.
 

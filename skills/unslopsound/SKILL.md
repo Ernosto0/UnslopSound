@@ -48,7 +48,7 @@ Scan the project without modifying any files:
 
 1. Locate `.wav`, `.mp3`, and `.ogg` files, excluding dependency/build/review directories (`node_modules`, `.git`, `dist`, `build`, `Library`, `.godot`, `.unslopsound-review`).
 2. Scope to short event-driven SFX. Flag and skip obvious background music, full soundtracks, voice/dialogue folders, or files longer than ~15 seconds unless the user explicitly asks to include them.
-3. Read relevant game/app documentation (`README*`, `GDD*`, `docs/`, design notes) to understand the project.
+3. Read relevant game/app documentation (`README*`, `GDD*`, `docs/`, design notes) and any audio build or procedural synthesis scripts (e.g., `make-sfx.*`) to understand intentional design/leveling choices and whether regenerating assets would overwrite manual edits.
 4. Search project source code and scene/config files for references to each discovered audio filename or stem to identify where and how each cue plays. Mark unreferenced files explicitly as `Unreferenced in scanned code`.
 
 ### Step 2: Understand
@@ -80,7 +80,7 @@ Present a concise, ranked shortlist of cues worth addressing (typically 3–8 it
 - **File & Cue Role** (with observed code play-site)
 - **Disposition**: `Refine` | `Keep as-is` | `Remove / silence` | `Unrepairable`
 - **Suspected Issue** (distinguishing measured fault vs. contextual hypothesis)
-- **Smallest Reasonable Change**
+- **Smallest Reasonable Change** — avoid placebo micro-edits; if an asset is already clean (`Flat factor == 0`, clean onset/tail, no obvious defect), prefer `Keep as-is` over barely audible tweaks.
 
 **STOP and wait for user approval.** Ask which targets they want refined into non-destructive candidates (or whether they want to adjust any target). Do not write or edit any audio files until the user confirms.
 
@@ -109,7 +109,7 @@ Once the user approves specific targets:
 1. Generate a **self-contained** `.unslopsound-review/<run-id>/compare.html`:
    - Zero external CDNs, zero `fetch()` or Web Audio CORS dependencies — use plain relative `<audio controls preload="metadata">` elements pointing to `./originals/...` and `./candidates/...` so it works directly over `file://`.
    - Include per-cue cards with: Cue Role, Trigger Frequency, Measured Before/After metrics table, Applied Edits, Limitations, Original (A) vs. Candidate (B) players with mutual-exclusion playback (playing one pauses others), a **Blind Mode** toggle (randomizes/hides A/B labels until revealed), and a per-cue decision selector (`Keep Candidate` / `Keep Original` / `Remove`) with a "Copy Decision Summary" button.
-2. Tell the user the exact path to `compare.html` so they can listen locally (mention `python -m http.server` only as a fallback if their browser restricts local file playback). Remind them that their ears make the final call.
+2. Give the user the exact path to `compare.html` **and** the one-line command to open it in their default browser (`Start-Process "<path>"` on Windows PowerShell, `open "<path>"` on macOS, `xdg-open "<path>"` on Linux), since clicking a `file://` link inside an IDE often opens raw HTML source in the editor. Mention `python -m http.server` only as a fallback if their browser restricts local file playback. Remind them that their ears make the final call.
 3. **STOP and wait for explicit per-file approval.**
 4. **If the user approves one or more changes:**
    - Confirm untouched originals remain backed up in `.unslopsound-review/<run-id>/originals/`.
