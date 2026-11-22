@@ -33,8 +33,15 @@ UnslopSound is a lightweight, non-destructive Claude Code skill (`/unslopsound`)
 Copy `skills/unslopsound/` into your project's `.claude/skills/` directory:
 
 ```bash
+# macOS / Linux
 mkdir -p .claude/skills
 cp -r path/to/UnslopSound/skills/unslopsound .claude/skills/unslopsound
+```
+
+```powershell
+# Windows PowerShell
+New-Item -ItemType Directory -Force .claude\skills | Out-Null
+Copy-Item -Recurse path\to\UnslopSound\skills\unslopsound .claude\skills\unslopsound
 ```
 
 ### Option 2: Install globally for all projects
@@ -82,7 +89,8 @@ Audit the existing UI and gameplay sound effects without editing anything yet.
 - **No native ear:** Unless your environment provides audio-understanding capability, Claude does **not** hear timbre or aesthetics directly. UnslopSound relies on deterministic file measurements (`ffprobe`/`ffmpeg`) plus your codebase context, and clearly separates measured facts from design hypotheses. **Your ears are the final quality gate.**
 - **Local DSP boundaries:** Conservative FFmpeg filters can fix laggy leading silence, start/end clicks, excess tails, loudness outliers, and mild harshness, but cannot undo severe baked-in hard clipping, heavy low-bitrate MP3 artifacts, or a fundamentally wrong sound metaphor.
 - **Lossy formats:** Re-encoding already low-bitrate `.mp3` or `.ogg` files can introduce minor generation loss; UnslopSound warns you when source bitrates are low.
-- **Review artifacts:** Refinement creates `.unslopsound-review/` in your project root. Keep it out of git (or delete it after you finish reviewing and applying changes).
+- **Generated audio pipelines:** If your project synthesizes SFX from a build script (for example `make-sfx.mjs`), re-running that script later will overwrite manually replaced audio files; UnslopSound checks for generator scripts during discovery and flags this before you apply changes.
+- **Review artifacts & browser playback:** Refinement creates `.unslopsound-review/` in your project root, including a self-contained `compare.html` designed to open in a web browser (not an IDE editor). Keep `.unslopsound-review/` out of git (or delete it after you finish reviewing and applying changes).
 
 ---
 
