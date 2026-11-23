@@ -80,9 +80,9 @@ Present a concise, ranked shortlist of cues worth addressing (typically 3–8 it
 - **File & Cue Role** (with observed code play-site)
 - **Disposition**: `Refine` | `Keep as-is` | `Remove / silence` | `Unrepairable`
 - **Suspected Issue** (distinguishing measured fault vs. contextual hypothesis)
-- **Smallest Reasonable Change** — avoid placebo micro-edits; if an asset is already clean (`Flat factor == 0`, clean onset/tail, no obvious defect), prefer `Keep as-is` over barely audible tweaks.
+- **Smallest Reasonable Change & Intensity Tier** — avoid placebo micro-edits; if an asset is already clean (`Flat factor == 0`, clean onset/tail, no obvious defect), prefer `Keep as-is` over barely audible tweaks. State whether each proposed edit is **Subtle Polish** (default: trim, fades, headroom, ±4 dB EQ) or **Bold Character** (when a cue feels flat/generic or the user wants a stronger redesign: self-layering, pitch/weight shift, transient punch, analog warmth, subtle spatial depth — still derived strictly from the existing asset).
 
-**STOP and wait for user approval.** Ask which targets they want refined into non-destructive candidates (or whether they want to adjust any target). Do not write or edit any audio files until the user confirms.
+**STOP and wait for user approval.** Ask which targets they want refined into non-destructive candidates (and whether they prefer `Subtle Polish` or `Bold Character` where applicable). Do not write or edit any audio files until the user confirms.
 
 ### Step 5: Refine (Non-Destructive)
 
@@ -98,9 +98,10 @@ Once the user approves specific targets:
    └── compare.html
    ```
 2. Copy each targeted original (byte-for-byte untouched) into `originals/<slug>.<ext>`, where `<slug>` replaces path separators with `_`.
-3. Generate each refined candidate into `candidates/<slug>__v1.<ext>` (increment `__v2`, etc. on follow-up passes) using the ordered conservative DSP chain in [references/sound-design.md](references/sound-design.md):
-   - Prefer trimming dead air, protective micro-fades, headroom/gain fixes, gentle EQ (±4 dB max), envelope/tail tightening, or modest pitch nudges.
-   - Apply the **Short-SFX Loudness Matching Protocol** so Original and Candidate play at comparable perceived loudness without exceeding `-1.0 dBFS` peak.
+3. Generate each refined candidate into `candidates/<slug>__v1.<ext>` (increment `__v2`, etc. on follow-up passes) using the DSP recipes in [references/sound-design.md](references/sound-design.md):
+   - **Subtle Polish (default):** dead-air trimming, protective micro-fades, headroom/DC fixes, gentle EQ (±4 dB max), envelope/tail shaping, or modest pitch nudges.
+   - **Bold Character (when requested or approved for flat/generic cues):** self-layering via `asplit`/`amix` (e.g., sub-octave weight layer or subtle pitched shimmer double), transient punch (`acompressor`), gentle saturation warmth (`asoftclip`), short spatial depth (`aecho`), and bolder tonal sculpting — still derived strictly from the existing asset.
+   - Apply the **Short-SFX Loudness Matching Protocol** so Original and Candidate play at comparable perceived loudness without exceeding `-1.0 dBFS` peak (`-2.0 dBFS` ceiling for lossy MP3/OGG).
 4. Run the **Pre-Present Technical QA Checklist** from [references/sound-design.md](references/sound-design.md) on every candidate. If a candidate fails QA (e.g., unintended silence, clipping, or broken format), fix or discard it and log the limitation honestly.
 5. Write `changelog.json` and `changelog.md` recording for each file: `original_path`, `backup_path`, `candidate_path`, `cue_role`, `filters_applied`, exact `ffmpeg_command`, `metrics_before`, `metrics_after`, `loudness_match_delta_db`, and `limitations`.
 

@@ -93,6 +93,15 @@ When combining edits in a single FFmpeg pass, keep filters in this order to avoi
 5. **Modest pitch nudge** (only when justified, ±1–3 semitones): `asetrate=<sr>*<ratio>,aresample=<sr>` (note: slightly changes duration; keep ratio within `0.85–1.18`)
 6. **Loudness match & peak safety**: `volume=<gain_db>dB`
 
+### 5.1 Bold Character Recipes (When Approved for Flat / Generic Cues)
+Still derived 100% from the existing source asset (no regeneration) and loudness-matched afterward:
+
+- **Sub-octave weight layer (impacts / hits / booms):** Split the signal, pitch one branch down an octave (`asetrate=<sr>*0.5,aresample=<sr>,lowpass=f=240`), trim to original length, blend at `-6` to `-10 dB` via `amix=inputs=2:duration=first:normalize=0`.
+- **Sparkle / shimmer double (pickups / coins / rewards):** Split the signal, pitch one branch slightly up (`asetrate=<sr>*1.12,aresample=<sr>,highpass=f=2500`), delay `20–35 ms` (`adelay=28|28`), blend at `-9` to `-12 dB`.
+- **Transient punch & warmth:** Light punch compression (`acompressor=threshold=-16dB:ratio=3.5:attack=2:release=45:makeup=2`) followed by gentle soft-clipping (`asoftclip=type=tanh`) for analog body.
+- **Short spatial depth (dry / sterile cues):** Subtle early-reflection `aecho=0.88:0.8:35|70:0.22|0.12` (always followed by a clean end-fade so tails don't cut abruptly).
+- **Bolder tonal sculpting:** Wider/stronger EQ moves (`±5` to `±8 dB`) or lower `lowpass` to reshape generic synth buzz into a warmer material identity.
+
 ### Format-Preserving Encoding Settings
 Match the original file's container, sample rate (`-ar`), and channel count (`-ac`) unless explicitly changing channels:
 - **WAV**: `-c:a pcm_s16le` (or match source `pcm_s24le` / `pcm_f32le` if detected)
